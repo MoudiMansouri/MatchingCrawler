@@ -10,12 +10,13 @@ public class Controller {
     private static Logger rootLogger;
 
     public static void main(String[] args) throws Exception {
-      //  long startTime = System.currentTimeMillis();
         configureLogger();
-        CollectUrls collectUrls = new CollectUrls();
+      //  UrlCollector urlCollector = new UrlCollector();
+        OfferCollector offerCollector = new OfferCollector();
 
-//        FileReader fileReader = new FileReader("JSON-CV-Storage/Output.txt");
+        FileReader fileReader = new FileReader("JSON-CV-Storage/offers.txt");
         ArrayList<String> urlList = new ArrayList<>();
+        System.out.println("Done opening");
 //
 //        try (BufferedReader br = new BufferedReader(fileReader)) {
 //            String line;
@@ -23,13 +24,11 @@ public class Controller {
 //                urlList.add(line);
 //            }
 //        }
-////      ArrayList<String> urls = collectUrls.next("https://www.indeed.com/resumes?co=GB&q=javascript&l=manchester", stringList, 0);
-////      System.out.println("size : " + urls.size());
-//        collectUrls.parseAll(urlList);
-//        long endTime = System.currentTimeMillis();
-//        System.out.println("Execution Time " + (endTime - startTime)/100 + "seconds");
-        ArrayList<String> offers = collectUrls.collectOffers("https://www.indeed.co.uk/jobs?q=java&l=London%2C%20Greater%20London", urlList, 1, 2);
-        collectUrls.parseOffers(offers);
+//        resumeCollector.parseCVs(urlList);
+        ArrayList<String> offers = new ArrayList<>();
+        offers = offerCollector.collectOffers("https://www.indeed.co.uk/jobs?q=java&l=London%2C%20Greater%20London", offers, 1, 5);
+        System.out.println(offers.size());
+//        resumeCollector.parseOffers(urlList);
     }
 
     private static void configureLogger() {
