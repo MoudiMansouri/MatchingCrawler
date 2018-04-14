@@ -17,8 +17,7 @@ public class ResumeCollector extends UrlCollector{
 
     UrlCollector collector;
 
-    public ResumeCollector(UrlCollector collector) {
-        this.collector = collector;
+    public ResumeCollector() {
     }
 
     public ArrayList<String> collectURL(String url, ArrayList<String> argUrlsList, int start) throws IOException {
@@ -154,8 +153,6 @@ public class ResumeCollector extends UrlCollector{
             }
         }
     }
-
-
 
     public void dummySave() throws IOException {
         WebDriver driver = this.collector.getDriver();
