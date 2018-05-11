@@ -1,3 +1,5 @@
+import Collectors.OfferCollector;
+import Collectors.ResumeCollector;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -11,24 +13,33 @@ public class Controller {
 
     public static void main(String[] args) throws Exception {
         configureLogger();
-      //  UrlCollector urlCollector = new UrlCollector();
+        ResumeCollector collector = new ResumeCollector();
         OfferCollector offerCollector = new OfferCollector();
 
-        FileReader fileReader = new FileReader("JSON-CV-Storage/offers.txt");
+
+
+        FileReader fileReader = new FileReader("JSON-CV-Storage/Output.txt");
         ArrayList<String> urlList = new ArrayList<>();
-        System.out.println("Done opening");
+
+        try (BufferedReader br = new BufferedReader(fileReader)) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                urlList.add(line);
+            }
+        }
+        collector.parseCVs(urlList);
+
+        //TODO Set up two example workflows
+//        ArrayList<String> offers = new ArrayList<>();
 //
+//        FileReader fileReader = new FileReader("JSON-CV-Storage/offers.txt");
 //        try (BufferedReader br = new BufferedReader(fileReader)) {
 //            String line;
 //            while ((line = br.readLine()) != null) {
-//                urlList.add(line);
+//                offers.add(line);
 //            }
 //        }
-//        resumeCollector.parseCVs(urlList);
-        ArrayList<String> offers = new ArrayList<>();
-        offers = offerCollector.collectOffers("https://www.indeed.co.uk/jobs?q=java&l=London%2C%20Greater%20London", offers, 1, 5);
-        System.out.println(offers.size());
-//        resumeCollector.parseOffers(urlList);
+//        offerCollector.parseOffers(offers);
     }
 
     private static void configureLogger() {

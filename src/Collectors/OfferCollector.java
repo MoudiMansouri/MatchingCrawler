@@ -1,7 +1,10 @@
+package Collectors;
+
 import Model.Offer;
+import Utils.ProgressBar;
+import Utils.ServerConnection;
 import com.google.gson.Gson;
 import org.openqa.selenium.*;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,13 +13,14 @@ import java.util.concurrent.TimeUnit;
 
 public class OfferCollector extends UrlCollector {
 
-    private UrlCollector collector;
 
 
     public OfferCollector() {
     }
 
-    public ArrayList<String> collectOffers(String url, ArrayList<String> argUrlsList, int start, int limit)
+
+
+    public ArrayList<String> collectURL(String url, ArrayList<String> argUrlsList, int start, int limit)
             throws IOException {
         WebDriver driver = this.getDriver();
 
@@ -50,7 +54,7 @@ public class OfferCollector extends UrlCollector {
 
             String href = navElements.get(0).getAttribute("href");
             start = start + 1;
-            collectOffers(href, argUrlsList, start, limit);
+            collectURL(href, argUrlsList, start, limit);
         }
         return argUrlsList;
     }
@@ -77,6 +81,10 @@ public class OfferCollector extends UrlCollector {
                     driver.findElement(By.xpath("//*[@id=\"job-content\"]")))) {
                 String description = driver.findElement(By.xpath("//*[@id=\"job_summary\"]")).getText();
                 offer.setDescription(description);
+            }
+            if(this.elementExists("//*[contains(@class, 'location')]",driver.findElement(By.xpath("//*[@id=\"job-content\"]")))) {
+                WebElement location= driver.findElement(By.xpath("//*[contains(@class, 'location')]"));
+                offer.setLocation(location.getText());
             }
             offer.setUrl(url);
             Gson gson = new Gson();

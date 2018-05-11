@@ -1,3 +1,4 @@
+import Utils.ServerConnection;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.jena.query.QueryExecution;

@@ -1,13 +1,17 @@
+package Collectors;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public class UrlCollector {
+public abstract class UrlCollector {
 
     private WebDriver driver;
 
@@ -53,5 +57,7 @@ public class UrlCollector {
 
         return true;
     }
+
+    public abstract ArrayList<String> collectURL(String url, ArrayList<String> argUrlList, int start, int limit) throws IOException;
 
 }

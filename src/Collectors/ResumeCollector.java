@@ -1,4 +1,8 @@
+package Collectors;
+
 import Model.*;
+import Utils.ProgressBar;
+import Utils.ServerConnection;
 import com.google.gson.Gson;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,21 +17,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class ResumeCollector extends UrlCollector{
+public class ResumeCollector extends UrlCollector {
 
-    UrlCollector collector;
 
     public ResumeCollector() {
     }
 
-    public ArrayList<String> collectURL(String url, ArrayList<String> argUrlsList, int start) throws IOException {
-        WebDriver driver = this.collector.getDriver();
-        System.out.println("Size : " + argUrlsList.size());
-        if (start == 4) {
+
+    public ArrayList<String> collectURL (String url, ArrayList<String> argUrlsList, int start, int limit) throws IOException {
+        WebDriver driver = this.getDriver();
+        if (start == limit) {
             driver.quit();
             return argUrlsList;
         }
-        if (start < 4) {
+        if (start < limit) {
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
             driver.get(url);
             List<WebElement> elements = driver.findElements(By.xpath("//div[@class=\"app_name\"]//a"));
@@ -43,19 +46,19 @@ public class ResumeCollector extends UrlCollector{
 
             String href = element.getAttribute("href");
             start = start + 1;
-            collectURL(href, argUrlsList, start);
+            collectURL(href, argUrlsList, start, limit);
         }
         return argUrlsList;
     }
 
     private void downloadCV(String url) {
-        WebDriver driver = this.collector.getDriver();
+        WebDriver driver = this.getDriver();
 
         driver.get(url);
         Candidate candidate = new Candidate();
-        if (this.collector.elementExists("//*[@id=\"resume-contact\"]", driver.findElement(By.xpath("//*[@id=\"resume_content\"]")))) {
+        if (this.elementExists("//*[@id=\"resume-contact\"]", driver.findElement(By.xpath("//*[@id=\"resume_content\"]")))) {
             //name
-            if (this.collector.elementExists("//*[contains(@class,'work-experience-section')]",
+            if (this.elementExists("//*[contains(@class,'work-experience-section')]",
                     driver.findElement(By.xpath("//*[@id=\"resume-contact\"]")))) {
 
                 WebElement nameElement = driver.findElement(By.xpath("//*[@id=\"resume-contact\"]"));
@@ -68,22 +71,22 @@ public class ResumeCollector extends UrlCollector{
             //work
             ArrayList<Experience> experiences = new ArrayList<>();
 
-            if (this.collector.elementExists("//*[@id=\"work-experience-items\"]",
+            if (this.elementExists("//*[@id=\"work-experience-items\"]",
                     driver.findElement(By.xpath("//*[@id=\"resume_body\"]")))) {
 
                 List<WebElement> workElements = driver.findElements(By.xpath("//*[contains(@class,'work-experience-section')]"));
                 for (WebElement e : workElements) {
                     Experience exp = new Experience();
 
-                    if (this.collector.elementExists(".//p[contains(@class,'work_title')]", e)) {
+                    if (this.elementExists(".//p[contains(@class,'work_title')]", e)) {
                         String role = e.findElement(By.xpath(".//p[contains(@class,'work_title')]")).getText();
                         exp.setRole(role);
                     }
-                    if (this.collector.elementExists(".//p[contains(@class,'work_company')]", e)) {
+                    if (this.elementExists(".//p[contains(@class,'work_company')]", e)) {
                         String inst = e.findElement(By.className("work_company")).getText();
                         exp.setInstitution(inst);
                     }
-                    if (this.collector.elementExists(".//p[contains(@class,'work_description')]", e)) {
+                    if (this.elementExists(".//p[contains(@class,'work_description')]", e)) {
                         String desc = e.findElement(By.className("work_description")).getText();
                         ;
                         exp.setDescription(desc);
@@ -94,31 +97,27 @@ public class ResumeCollector extends UrlCollector{
 
             //education
             ArrayList<Education> educations = new ArrayList<>();
-            if (this.collector.elementExists("//*[contains(@class,'education-section')]",
+            if (this.elementExists("//*[contains(@class,'education-section')]",
                     driver.findElement(By.xpath("//*[@id=\"resume_body\"]")))) {
                 List<WebElement> educationElements = driver.findElements(By.xpath("//*[contains(@class,'education-section')]"));
                 for (WebElement e : educationElements) {
                     Education edu = new Education();
 
-                    if (this.collector.elementExists(".//p[contains(@class,'edu_title')]", e)) {
+                    if (this.elementExists(".//p[contains(@class,'edu_title')]", e)) {
                         String title = e.findElement(By.xpath("//*[contains(@class,'edu_title')]")).getText();
                         edu.setDescription(title);
                     }
-                    if (this.collector.elementExists(".//div[contains(@class,'edu_school')]", e)) {
+                    if (this.elementExists(".//div[contains(@class,'edu_school')]", e)) {
                         String inst = e.findElement(By.xpath(".//div[contains(@class,'edu_school')]")).getText();
                         edu.setInstitution(inst);
                     }
-//                    if (elementExists(".//p[contains(@class,'edu_dates')]", e)) {
-//                        String desc = e.findElement(By.xpath(".//p[contains(@class,'edu_dates')]")).getText();
-//                        edu.setDescription(desc);
-//                    }
                     educations.add(edu);
                 }
             }
 
             //skills
             ArrayList<Skill> skills = new ArrayList<>();
-            if (this.collector.elementExists("//*[@id=\"skills-items\"]",
+            if (this.elementExists("//*[@id=\"skills-items\"]",
                     driver.findElement(By.xpath("//*[@id=\"resume_body\"]")))) {
                 WebElement skillsElement = driver.findElement(By.xpath("//*[@id=\"skills-items\"]"));
                 List<WebElement> skillElements = skillsElement.findElements(By.xpath("//*[contains(@class,'skill-text')]"));
@@ -128,6 +127,11 @@ public class ResumeCollector extends UrlCollector{
                     skill.setDescription(e.getText());
                     skills.add(skill);
                 }
+            }
+
+            if(this.elementExists("//*[contains(@class, 'locality')]", driver.findElement(By.xpath("//*[@id=\"resume_body\"]")))) {
+                WebElement location= driver.findElement(By.xpath("//*[contains(@class, 'locality')]"));
+                candidate.setLocation(location.getText());
             }
             candidate.setExperiences(experiences);
             candidate.setEducations(educations);
@@ -140,7 +144,7 @@ public class ResumeCollector extends UrlCollector{
     }
 
     public void parseCVs(List<String> urls) throws InterruptedException {
-        WebDriver driver = this.collector.getDriver();
+        WebDriver driver = this.getDriver();
 
         ProgressBar bar = new ProgressBar();
         System.out.println("Parsing...");
@@ -155,7 +159,7 @@ public class ResumeCollector extends UrlCollector{
     }
 
     public void dummySave() throws IOException {
-        WebDriver driver = this.collector.getDriver();
+        WebDriver driver = this.getDriver();
 
         Candidate dummy = new Candidate();
         dummy.setFirstName("Moudi");

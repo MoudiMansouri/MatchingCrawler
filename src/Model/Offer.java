@@ -5,6 +5,15 @@ public class Offer {
     private String organization;
     private String description;
     private String url;
+    private String location;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public String getUrl() {
         return url;

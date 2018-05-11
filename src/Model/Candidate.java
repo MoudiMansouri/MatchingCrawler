@@ -8,6 +8,15 @@ public class Candidate {
     private ArrayList<Experience> experiences;
     private ArrayList<Education> educations;
     private ArrayList<Skill> skills;
+    private String location;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public String getFirstName() {
         return firstName;

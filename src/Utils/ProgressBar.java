@@ -1,3 +1,5 @@
+package Utils;
+
 public class ProgressBar {
     private StringBuilder progress;
 
