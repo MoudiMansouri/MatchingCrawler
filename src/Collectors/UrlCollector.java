@@ -23,7 +23,7 @@ public abstract class UrlCollector {
         this.driver = driver;
     }
 
-    public UrlCollector() {
+    public UrlCollector(String email, String password) {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\Moudi\\IdeaProjects\\Craweler\\chromedriver.exe");
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--disable-impl-side-painting"); //it worked for me
@@ -38,8 +38,8 @@ public abstract class UrlCollector {
         cap.setCapability(ChromeOptions.CAPABILITY, options);
         this.driver = new ChromeDriver(chromeOptions);
         this.driver.get("https://www.indeed.com/account/login");
-        this.driver.findElement(By.id("signin_email")).sendKeys("spam.reciever.moudi@gmail.com");
-        this.driver.findElement(By.id("signin_password")).sendKeys("Fils411838!");
+        this.driver.findElement(By.id("signin_email")).sendKeys(email);
+        this.driver.findElement(By.id("signin_password")).sendKeys(password);
         this.driver.findElement(By.className("btn-signin")).click();
         //  Thread.sleep(3000);
         this.driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);

@@ -13,12 +13,9 @@ import java.util.concurrent.TimeUnit;
 
 public class OfferCollector extends UrlCollector {
 
-
-
-    public OfferCollector() {
+    public OfferCollector(String email, String password) {
+        super(email, password);
     }
-
-
 
     public ArrayList<String> collectURL(String url, ArrayList<String> argUrlsList, int start, int limit)
             throws IOException {

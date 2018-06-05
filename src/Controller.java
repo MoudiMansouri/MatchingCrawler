@@ -13,8 +13,10 @@ public class Controller {
 
     public static void main(String[] args) throws Exception {
         configureLogger();
-        ResumeCollector collector = new ResumeCollector();
-        OfferCollector offerCollector = new OfferCollector();
+        String email = "";
+        String password = "";
+        ResumeCollector collector = new ResumeCollector(email, password);
+        OfferCollector offerCollector = new OfferCollector(email, password);
 
 
 

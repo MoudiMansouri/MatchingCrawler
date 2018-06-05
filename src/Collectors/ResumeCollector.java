@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 public class ResumeCollector extends UrlCollector {
 
-
-    public ResumeCollector() {
+    public ResumeCollector(String email, String password) {
+        super(email, password);
     }
 
 
@@ -143,7 +143,7 @@ public class ResumeCollector extends UrlCollector {
         serverConnection.postToServer("http://localhost:3000/candidate", gsonString);
     }
 
-    public void parseCVs(List<String> urls) throws InterruptedException {
+    public void parseCVs(List<String> urls) {
         WebDriver driver = this.getDriver();
 
         ProgressBar bar = new ProgressBar();
